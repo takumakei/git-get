@@ -6,14 +6,10 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestUrl(t *testing.T) {
-	assert.Equal(t, 42, 42)
-	require.Equal(t, 42, 42)
-
 	osHostname = func() (string, error) {
 		return "git.example", nil
 	}
