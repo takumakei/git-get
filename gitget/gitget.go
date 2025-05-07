@@ -196,11 +196,21 @@ func gitCheckout(cmd *cobra.Command, url *giturl.URL, repoDir, repoCO string) er
 func copyTree(_ *cobra.Command, url *giturl.URL, repoCO, target string, exclude *excludes.Matcher) error {
 	log.Debug("copyTree", "url", url, "repoCO", repoCO, "target", target)
 	src := filepath.Join(repoCO, url.Path)
-	if _, err := stacktrace.Trace2(os.Stat(src)); err != nil {
+	root := "."
+	if info, err := stacktrace.Trace2(os.Stat(src)); err != nil {
 		return err
+	} else if !info.IsDir() {
+		if dir := filepath.Dir(target); dir != "." && dir != "/" {
+			if err := os.MkdirAll(target, 0755); err != nil {
+				return err
+			}
+		}
+		dir, src := filepath.Split(src)
+		return copyFile(target, os.DirFS(dir), src)
 	}
 	srcFS := os.DirFS(src)
-	return fs.WalkDir(srcFS, ".", func(path string, d fs.DirEntry, err error) error {
+	return fs.WalkDir(srcFS, root, func(path string, d fs.DirEntry, err error) error {
+		fmt.Println(path)
 		if err != nil {
 			return err
 		}
