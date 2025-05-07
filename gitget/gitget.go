@@ -210,7 +210,6 @@ func copyTree(_ *cobra.Command, url *giturl.URL, repoCO, target string, exclude 
 	}
 	srcFS := os.DirFS(src)
 	return fs.WalkDir(srcFS, root, func(path string, d fs.DirEntry, err error) error {
-		fmt.Println(path)
 		if err != nil {
 			return err
 		}
