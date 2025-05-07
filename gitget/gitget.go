@@ -97,11 +97,12 @@ func validArgs(
 
 func runE(cmd *cobra.Command, args []string) error {
 	log.Info(cmd.Name(), flags.Log(cmd), slog.Any("args", args))
-	exclude, err := excludes.New(results.Must1(cmd.LocalFlags().GetStringSlice("exclude")))
+	flags := cmd.LocalFlags()
+	exclude, err := excludes.New(results.Must1(flags.GetStringSlice("exclude")))
 	if err != nil {
 		return err
 	}
-	cacheDir := results.Must1(cmd.LocalFlags().GetString("cache-dir"))
+	cacheDir := results.Must1(flags.GetString("cache-dir"))
 	if len(args) == 0 {
 		return pflag.ErrHelp
 	}
@@ -128,7 +129,7 @@ func runE(cmd *cobra.Command, args []string) error {
 			return err
 		}
 	} else {
-		if !results.Must1(cmd.LocalFlags().GetBool("force")) {
+		if !results.Must1(flags.GetBool("force")) {
 			return fmt.Errorf("%q, file already exists", target)
 		}
 	}
